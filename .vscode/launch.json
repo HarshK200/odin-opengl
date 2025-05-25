@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/mfussenegger/dapconfig-schema/master/dapconfig-schema.json",
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch odin build executable with codelldb",
+      "type": "codelldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/debug/out",
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
