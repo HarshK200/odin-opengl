@@ -25,10 +25,8 @@ main :: proc() {
         // INFO: handle user input
 		glfw.PollEvents()
 
-        update(shaderProgram)
-
 		// INFO: draw 3D cube
-		draw()
+		draw(shaderProgram)
 
 		glfw.SwapBuffers(window.handlerID)
 	}
@@ -135,23 +133,35 @@ init :: proc() -> Shader {
     return shaderProgram
 }
 
-update :: proc(shaderProgram: Shader) {
-    model := glsl.mat4Rotate(glsl.vec3({1.0, 1.0, 0.0}), cast(f32)glfw.GetTime())
-
-    // fmt.println(model[0])
-    // fmt.println(model[1])
-    // fmt.println(model[2])
-    // fmt.println(model[3])
-
-    transformMatLoc := gl.GetUniformLocation(shaderProgram.ProgramId, "transformMatrix")
-    gl.UniformMatrix4fv(transformMatLoc, 1, gl.FALSE, cast(^f32) &model)
-}
-
 // draw the currently bound buffers
-draw :: proc() {
+draw :: proc(shaderProgram: Shader) {
 	gl.ClearColor(0.15, 0.25, 0.2, 1.0)
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-	// gl.DrawArrays(gl.TRIANGLES, 0, 3)
-    gl.DrawArrays(gl.TRIANGLES, 0, 36)
+    cubePositions :[]glsl.vec3 = {
+        glsl.vec3({0.0,  0.0,  0.0}),
+        glsl.vec3({2.0,  5.0, -15.0}),
+        glsl.vec3({-1.5, -2.2, -2.5}),
+        glsl.vec3({-3.8, -2.0, -12.3}),
+        glsl.vec3({ 2.4, -0.4, -3.5}),
+        glsl.vec3({-1.7,  3.0, -7.5}),
+        glsl.vec3({ 1.3, -2.0, -2.5}),
+        glsl.vec3({ 1.5,  2.0, -2.5}),
+        glsl.vec3({ 1.5,  0.2, -1.5}),
+        glsl.vec3({-1.3,  1.0, -1.5}),
+    }
+
+    transformMatLoc := gl.GetUniformLocation(shaderProgram.ProgramId, "transformMatrix")
+
+    for pos, idx in cubePositions {
+        model := glsl.mat4Translate(pos)
+        model = model * glsl.mat4Rotate(glsl.vec3({1.0, 1.0, 0.0}), cast(f32)((cast(f64)idx + glfw.GetTime() / 2)))
+        view := glsl.mat4Translate(glsl.vec3({0.0, 0.0, -3.0}))
+        proj := glsl.mat4Perspective(45.0, 800/600, 0.1, 100)
+
+        transformMat := proj * view * model
+        gl.UniformMatrix4fv(transformMatLoc, 1, gl.FALSE, cast(^f32) &transformMat)
+
+        gl.DrawArrays(gl.TRIANGLES, 0, 36)
+    }
 }
