@@ -17,6 +17,7 @@ NewWindow :: proc(width, height: i32, title: cstring) -> ^Window {
 	window.Height = height
 	window.Title = title
 
+    // Window hints to config OpenGL version and profile
 	glfw.WindowHint(glfw.RESIZABLE, false)
 	glfw.WindowHint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
 	glfw.WindowHint(glfw.CONTEXT_VERSION_MAJOR, 4)

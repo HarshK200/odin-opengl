@@ -11,7 +11,8 @@ Shader :: struct {
 	ProgramId: u32,
 }
 
-NewShader :: proc(vertexPath, fragmentPath: string) -> Shader {
+//loads vertex and fragmentShader from file, compiles, links and returns a pointer to the shader program
+NewShader :: proc(vertexPath, fragmentPath: string) -> ^Shader {
 	// INFO: reading shaders fromfile
 	ok: bool
 	vertexSource: []u8
@@ -62,9 +63,20 @@ NewShader :: proc(vertexPath, fragmentPath: string) -> Shader {
 	// INFO: free used buffers
 	free_all(context.temp_allocator)
 
-	shader := Shader {
-		ProgramId = programId,
-	}
+	shader := new(Shader)
+	shader.ProgramId = programId
 
 	return shader
+}
+
+//loads all shaders from disk, compiles, links and adds shaderProgram handleId to providedgame
+LoadAllShaders :: proc(game: ^Game) {
+	// load shader from file
+	basicShader := NewShader(
+		"/home/harsh/Desktop/odin-opengl/assets/shaders/vertex.glsl",
+		"/home/harsh/Desktop/odin-opengl/assets/shaders/fragment.glsl",
+	)
+
+	// add shaderId to game.shaders map
+	game.shaders["basic_shader"] = basicShader
 }
