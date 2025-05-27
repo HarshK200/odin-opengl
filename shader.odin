@@ -15,8 +15,8 @@ Shader :: struct {
 NewShader :: proc(vertexPath, fragmentPath: string) -> ^Shader {
 	// INFO: reading shaders fromfile
 	ok: bool
-	vertexSource: []u8
-	fragmentSource: []u8
+	vertexSource: []byte
+	fragmentSource: []byte
 	if vertexSource, ok = os.read_entire_file(vertexPath, context.temp_allocator); !ok {
 		fmt.eprintln("Couldn't read vertex shader file")
 		intrinsics.debug_trap()

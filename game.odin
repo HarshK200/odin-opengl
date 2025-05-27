@@ -54,29 +54,11 @@ RunGame :: proc(game: ^Game) {
 }
 
 Ready :: proc(game: ^Game) {
+    // Generate all the entities
 	gl.UseProgram(game.shaders["basic_shader"].ProgramId)
 
-
-	cubePositions: []glsl.vec3 = {
-		glsl.vec3({0.0, 0.0, 0.0}),
-		glsl.vec3({2.0, 5.0, -15.0}),
-		glsl.vec3({-1.5, -2.2, -2.5}),
-		glsl.vec3({-3.8, -2.0, -12.3}),
-		glsl.vec3({2.4, -0.4, -3.5}),
-		glsl.vec3({-1.7, 3.0, -7.5}),
-		glsl.vec3({1.3, -2.0, -2.5}),
-		glsl.vec3({1.5, 2.0, -2.5}),
-		glsl.vec3({1.5, 0.2, -1.5}),
-		glsl.vec3({-1.3, 1.0, -1.5}),
-	}
-
-	for cubePos, idx in cubePositions {
-		if idx % 2 == 0 {
-			game.Cubes[fmt.tprintf("cube%i", idx)] = NewCube(game.textures["beluga_cat"], cubePos)
-		} else {
-			game.Cubes[fmt.tprintf("cube%i", idx)] = NewCube(game.textures["cat2"], cubePos)
-		}
-	}
+    // INFO: creating all entities (for now just the cube)
+    CubeOnReady(game)
 }
 
 Update :: proc(game: ^Game) {
@@ -85,26 +67,8 @@ Update :: proc(game: ^Game) {
 	gl.ClearColor(0.15, 0.25, 0.2, 1.0)
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-	shaderProgramId := game.shaders["basic_shader"].ProgramId
-
-	transformMatLoc := gl.GetUniformLocation(shaderProgramId, "transformMatrix")
-
-	for key, cube in game.Cubes {
-		model := glsl.mat4Translate(cube.pos)
-		model *= glsl.mat4Rotate(
-			glsl.vec3({1.0, 1.0, 0.0}),
-			cast(f32)(((glfw.GetTime() + cast(f64)cube.vao) / 2)),
-		)
-		view := glsl.mat4Translate(glsl.vec3({0.0, 0.0, -3.0}))
-		proj := glsl.mat4Perspective(45.0, 800 / 600, 0.1, 100)
-
-		transformMat := proj * view * model
-		gl.UniformMatrix4fv(transformMatLoc, 1, gl.FALSE, cast(^f32)&transformMat)
-
-		gl.BindTexture(gl.TEXTURE_2D, cube.texture.Id)
-		gl.BindVertexArray(cube.vao)
-		gl.DrawArrays(gl.TRIANGLES, 0, 36)
-	}
+    // INFO: update all entites (for now just the cube)
+    CubeOnUpdate(game)
 
 	glfw.SwapBuffers(game.window.handlerID)
 }
