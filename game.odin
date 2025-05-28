@@ -12,6 +12,7 @@ Game :: struct {
 	textures: map[string]^Texture, // array of textureId, points to texture in GPU memory
 	shaders:  map[string]^Shader,
 	Cubes:    map[string]^Cube,
+	Camera3d: ^Camera3d,
 }
 
 NewGame :: proc() -> ^Game {
@@ -41,6 +42,8 @@ InitGame :: proc(game: ^Game) {
 	LoadAllTextures(game)
 
 	LoadAllShaders(game)
+
+	game.Camera3d = NewCamera3d()
 }
 
 //starts the main game loop
@@ -54,11 +57,11 @@ RunGame :: proc(game: ^Game) {
 }
 
 Ready :: proc(game: ^Game) {
-    // Generate all the entities
+	// Generate all the entities
 	gl.UseProgram(game.shaders["basic_shader"].ProgramId)
 
-    // INFO: creating all entities (for now just the cube)
-    CubeOnReady(game)
+	// INFO: creating all entities (for now just the cube)
+	CubeOnReady(game)
 }
 
 Update :: proc(game: ^Game) {
@@ -67,8 +70,11 @@ Update :: proc(game: ^Game) {
 	gl.ClearColor(0.15, 0.25, 0.2, 1.0)
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-    // INFO: update all entites (for now just the cube)
-    CubeOnUpdate(game)
+	// INFO: update camera position
+	Camera3dOnUpdate(game.Camera3d)
+
+	// INFO: update all entites (for now just the cube)
+	CubeOnUpdate(game)
 
 	glfw.SwapBuffers(game.window.handlerID)
 }
