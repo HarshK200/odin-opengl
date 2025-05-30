@@ -95,6 +95,7 @@ ProcessKeyInput :: proc(game: ^Game) {
 	window := game.window.handlerID
 	camera := game.Camera3d
 	cameraSpeed: f32 = 2.5 * cast(f32)game.deltaTime
+    upSpeed: f32 = 2.5 * cast(f32)game.deltaTime
 
 	// handle camera3d movement
 	if glfw.GetKey(window, glfw.KEY_W) == glfw.PRESS {
@@ -109,4 +110,10 @@ ProcessKeyInput :: proc(game: ^Game) {
 	if glfw.GetKey(window, glfw.KEY_D) == glfw.PRESS {
 		camera.pos += cameraSpeed * (glsl.normalize(glsl.cross(camera.front, camera.up)))
 	}
+    if glfw.GetKey(window, glfw.KEY_SPACE) == glfw.PRESS {
+		camera.pos += glsl.vec3({0.0, upSpeed, 0.0})
+    }
+    if glfw.GetKey(window, glfw.KEY_LEFT_CONTROL) == glfw.PRESS {
+		camera.pos -= glsl.vec3({0.0, upSpeed, 0.0})
+    }
 }
