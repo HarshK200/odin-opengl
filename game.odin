@@ -66,6 +66,7 @@ Ready :: proc(game: ^Game) {
 
 Update :: proc(game: ^Game) {
 	glfw.PollEvents()
+	processKeyInput(game)
 
 	gl.ClearColor(0.15, 0.25, 0.2, 1.0)
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
@@ -77,4 +78,24 @@ Update :: proc(game: ^Game) {
 	CubeOnUpdate(game)
 
 	glfw.SwapBuffers(game.window.handlerID)
+}
+
+processKeyInput :: proc(game: ^Game) {
+	window := game.window.handlerID
+	camera := game.Camera3d
+	cameraSpeed: f32 = 0.2
+
+	// handle camera3d movement
+	if glfw.GetKey(window, glfw.KEY_W) == glfw.PRESS {
+		camera.pos += cameraSpeed * camera.front
+	}
+	if glfw.GetKey(window, glfw.KEY_S) == glfw.PRESS {
+		camera.pos -= cameraSpeed * camera.front
+	}
+	if glfw.GetKey(window, glfw.KEY_A) == glfw.PRESS {
+		camera.pos -= cameraSpeed * (glsl.normalize(glsl.cross(camera.front, camera.up)))
+	}
+    if glfw.GetKey(window, glfw.KEY_D) == glfw.PRESS {
+		camera.pos += cameraSpeed * (glsl.normalize(glsl.cross(camera.front, camera.up)))
+    }
 }
