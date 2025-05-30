@@ -8,11 +8,13 @@ import "vendor:glfw"
 
 
 Game :: struct {
-	window:   ^Window,
-	textures: map[string]^Texture, // array of textureId, points to texture in GPU memory
-	shaders:  map[string]^Shader,
-	Cubes:    map[string]^Cube,
-	Camera3d: ^Camera3d,
+	window:    ^Window,
+	textures:  map[string]^Texture, // array of textureId, points to texture in GPU memory
+	shaders:   map[string]^Shader,
+	Cubes:     map[string]^Cube,
+	Camera3d:  ^Camera3d,
+	deltaTime: f64,
+	prevTime:  f64,
 }
 
 NewGame :: proc() -> ^Game {
@@ -44,6 +46,8 @@ InitGame :: proc(game: ^Game) {
 	LoadAllShaders(game)
 
 	game.Camera3d = NewCamera3d()
+	game.deltaTime = 0.0
+	game.prevTime = 0.0
 }
 
 //starts the main game loop
@@ -65,8 +69,9 @@ Ready :: proc(game: ^Game) {
 }
 
 Update :: proc(game: ^Game) {
+	UpdateDeltaTime(game)
 	glfw.PollEvents()
-	processKeyInput(game)
+	ProcessKeyInput(game)
 
 	gl.ClearColor(0.15, 0.25, 0.2, 1.0)
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
@@ -80,10 +85,16 @@ Update :: proc(game: ^Game) {
 	glfw.SwapBuffers(game.window.handlerID)
 }
 
-processKeyInput :: proc(game: ^Game) {
+UpdateDeltaTime :: proc(game: ^Game) {
+	currentTime := glfw.GetTime()
+	game.deltaTime = currentTime - game.prevTime
+	game.prevTime = currentTime
+}
+
+ProcessKeyInput :: proc(game: ^Game) {
 	window := game.window.handlerID
 	camera := game.Camera3d
-	cameraSpeed: f32 = 0.2
+	cameraSpeed: f32 = 2.5 * cast(f32)game.deltaTime
 
 	// handle camera3d movement
 	if glfw.GetKey(window, glfw.KEY_W) == glfw.PRESS {
@@ -95,7 +106,7 @@ processKeyInput :: proc(game: ^Game) {
 	if glfw.GetKey(window, glfw.KEY_A) == glfw.PRESS {
 		camera.pos -= cameraSpeed * (glsl.normalize(glsl.cross(camera.front, camera.up)))
 	}
-    if glfw.GetKey(window, glfw.KEY_D) == glfw.PRESS {
+	if glfw.GetKey(window, glfw.KEY_D) == glfw.PRESS {
 		camera.pos += cameraSpeed * (glsl.normalize(glsl.cross(camera.front, camera.up)))
-    }
+	}
 }
