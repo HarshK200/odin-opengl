@@ -70,7 +70,7 @@ NewShader :: proc(vertexPath, fragmentPath: string) -> ^Shader {
 }
 
 //loads all shaders from disk, compiles, links and adds shaderProgram handleId to providedgame
-LoadAllShaders :: proc(game: ^Game) {
+LoadAllShaders :: proc() {
 	// load shader from file
 	basicShader := NewShader(
 		"/home/harsh/Desktop/odin-opengl/assets/shaders/vertex.glsl",

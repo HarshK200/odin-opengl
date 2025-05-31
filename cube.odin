@@ -255,7 +255,7 @@ NewCube :: proc(texture: ^Texture, position: glsl.vec3) -> ^Cube {
 	return cube
 }
 
-CubeOnReady :: proc(game: ^Game) {
+CubeOnReady :: proc() {
 	cubePositions: []glsl.vec3 = {
 		glsl.vec3({0.0, 0.0, 0.0}),
 		glsl.vec3({2.0, 5.0, -15.0}),
@@ -278,19 +278,19 @@ CubeOnReady :: proc(game: ^Game) {
 	}
 }
 
-CubeOnUpdate :: proc(game: ^Game) {
+CubeOnUpdate :: proc() {
 	shaderProgramId := game.shaders["basic_shader"].ProgramId
 	transformMatLoc := gl.GetUniformLocation(shaderProgramId, "transformMatrix")
 	for key, cube in game.Cubes {
+		fov := glsl.radians(game.Camera3d.fov)
+
 		model := glsl.mat4Translate(cube.pos)
 		model *= glsl.mat4Rotate(
 			glsl.vec3({1.0, 1.0, 0.0}),
 			cast(f32)(((glfw.GetTime() + cast(f64)cube.vao) / 2)),
 		)
-
-		// camera movement in circle around z-axis
 		view := game.Camera3d.lookAt
-		proj := glsl.mat4Perspective(45.0, 800 / 600, 0.1, 100)
+		proj := glsl.mat4Perspective(fov, 800 / 600, 0.1, 100)
 
 		transformMat := proj * view * model
 		gl.UniformMatrix4fv(transformMatLoc, 1, gl.FALSE, cast(^f32)&transformMat)

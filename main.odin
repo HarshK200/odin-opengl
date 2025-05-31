@@ -6,9 +6,9 @@ import "core:math/linalg/glsl"
 import gl "vendor:OpenGL"
 import "vendor:glfw"
 
-main :: proc() {
-    game := NewGame()
+game := NewGame()
 
-    InitGame(game)
-    RunGame(game)
+main :: proc() {
+	InitGame()
+	RunGame()
 }

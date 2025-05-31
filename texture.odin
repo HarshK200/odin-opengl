@@ -67,7 +67,7 @@ LoadTextureFromFile :: proc(filePath: cstring) -> ^Texture {
 
 
 // loads all texture in GPU memory and adds there handleId to provided game object
-LoadAllTextures :: proc(game: ^Game) {
+LoadAllTextures :: proc() {
     game.textures["beluga_cat"] = LoadTextureFromFile("/home/harsh/Desktop/odin-opengl/assets/textures/beluga-cat-meme.gif")
     game.textures["cat2"] = LoadTextureFromFile("/home/harsh/Desktop/odin-opengl/assets/textures/cat2.jpg")
 }
